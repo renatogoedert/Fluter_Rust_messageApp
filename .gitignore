@@ -32,6 +32,8 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+/lib/generated
+/lib/l10n
 
 # Symbolication related
 app.*.symbols
