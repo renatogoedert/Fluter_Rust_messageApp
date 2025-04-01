@@ -1,9 +1,12 @@
 //Code Developed By Renato Francisco Goedert
 
-import 'package:fluter_rust_message_app/Components/message_create.dart';
-import 'package:fluter_rust_message_app/Components/message_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import 'package:fluter_rust_message_app/src/rust/lib.dart';
+
+import '../Components/message_create.dart';
+import '../Components/message_list.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key, required this.title});
@@ -19,46 +22,60 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageControler = TextEditingController();
 
   //Mock data
-  List<Map<String, dynamic>> messages = [
-    {
-      'sender': 'Alice',
-      'text': 'Hey, how are you?',
-      'time': '10:30 AM',
-      'isMe': false,
-    },
-    {
-      'sender': 'Me',
-      'text': 'I\'m good, thanks! How about you?',
-      'time': '10:32 AM',
-      'isMe': true,
-    },
-  ];
+  List<Map<String, Object>> messages = [];
 
-  //Send Message Function
-  void _sendMessage() {
+  @override
+  void initState() {
+    super.initState();
+    _loadMessages();
+  }
+
+  Future<void> _loadMessages() async {
+    final rustMessages = await getMessages();
+    setState(() {
+      messages = rustMessages
+          .map((m) => {
+                'sender': m.sender,
+                'text': m.text,
+                'time': m.time,
+                'isMe': m.isMe,
+              })
+          .toList();
+    });
+  }
+
+//Send Message Function
+  void _sendMessage() async {
+    //Get message text
+    String messageText = _messageControler.text.trim();
+
     //Debug Print
     if (kDebugMode) {
-      print('Message text to be added: ${_messageControler.text}');
+      print('Message text to be added: $messageText');
     }
 
-    //Send Message if controller not empty
-    if (_messageControler.text.isNotEmpty) {
-      setState(() {
-        messages.add({
-          'sender': 'Me',
-          'text': _messageControler.text,
-          'time': TimeOfDay.now().format(context),
-          'isMe': true,
-        });
+    if (messageText.isNotEmpty) {
+      //Get current time
+      String timeNow = TimeOfDay.now().format(context);
 
-        //Confirmation message
-        if (kDebugMode) {
-          print("Message Added!");
-        }
+      //Add message to Rust storage
+      await addMessage(
+        sender: 'Me',
+        text: messageText,
+        time: timeNow,
+        isMe: true,
+      );
 
-        //Needed to clean the TextField
-        _messageControler.clear();
-      });
+      //Reload messages from Rust
+      _loadMessages();
+
+      //Clear the input field
+      _messageControler.clear();
+
+      //Confirmation log
+      if (kDebugMode) {
+        print("Message added to Rust and UI updated!");
+      }
     }
   }
 
