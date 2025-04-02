@@ -1,0 +1,26 @@
+[
+  {
+    "sender": "Alice",
+    "text": "Hello, how are you?",
+    "time": "2025-04-02T14:30:00Z",
+    "is_me": false
+  },
+  {
+    "sender": "Bob",
+    "text": "I'm good, thanks! How about you?",
+    "time": "2025-04-02T14:31:15Z",
+    "is_me": false
+  },
+  {
+    "sender": "Alice",
+    "text": "I'm doing well. What's new with you?",
+    "time": "2025-04-02T14:32:45Z",
+    "is_me": false
+  },
+  {
+    "sender": "Bob",
+    "text": "Not much, just working on some projects.",
+    "time": "2025-04-02T14:33:10Z",
+    "is_me": false
+  }
+]

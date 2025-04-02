@@ -81,9 +81,12 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 
 abstract class RustLibApi extends BaseApi {
   Future<void> crateAddMessage(
-      {required String sender, required String text, required bool isMe});
+      {required String filePath,
+      required String sender,
+      required String text,
+      required bool isMe});
 
-  Future<List<Message>> crateGetMessages();
+  Future<List<Message>> crateGetMessages({required String filePath});
 
   String crateApiSimpleGreet({required String name});
 
@@ -100,10 +103,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @override
   Future<void> crateAddMessage(
-      {required String sender, required String text, required bool isMe}) {
+      {required String filePath,
+      required String sender,
+      required String text,
+      required bool isMe}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(filePath, serializer);
         sse_encode_String(sender, serializer);
         sse_encode_String(text, serializer);
         sse_encode_bool(isMe, serializer);
@@ -115,21 +122,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeErrorData: null,
       ),
       constMeta: kCrateAddMessageConstMeta,
-      argValues: [sender, text, isMe],
+      argValues: [filePath, sender, text, isMe],
       apiImpl: this,
     ));
   }
 
   TaskConstMeta get kCrateAddMessageConstMeta => const TaskConstMeta(
         debugName: "add_message",
-        argNames: ["sender", "text", "isMe"],
+        argNames: ["filePath", "sender", "text", "isMe"],
       );
 
   @override
-  Future<List<Message>> crateGetMessages() {
+  Future<List<Message>> crateGetMessages({required String filePath}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(filePath, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 2, port: port_);
       },
@@ -138,14 +146,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeErrorData: null,
       ),
       constMeta: kCrateGetMessagesConstMeta,
-      argValues: [],
+      argValues: [filePath],
       apiImpl: this,
     ));
   }
 
   TaskConstMeta get kCrateGetMessagesConstMeta => const TaskConstMeta(
         debugName: "get_messages",
-        argNames: [],
+        argNames: ["filePath"],
       );
 
   @override

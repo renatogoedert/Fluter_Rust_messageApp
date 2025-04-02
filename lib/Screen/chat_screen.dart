@@ -2,6 +2,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../src/rust/lib.dart';
 
@@ -24,16 +25,22 @@ class _ChatScreenState extends State<ChatScreen> {
   //Variable to hold the messages
   List<Map<String, Object>> messages = [];
 
+  Future<String> getMessagesFilePath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    return '${directory.path}/messages.txt';
+  }
+
   //Initiate State loading messages from Rust
   @override
   void initState() {
     super.initState();
-    // _loadMessages();
+    _loadMessages();
   }
 
   //Lead Message Function
   Future<void> _loadMessages() async {
-    final rustMessages = await getMessages();
+    final rustMessages =
+        await getMessages(filePath: await getMessagesFilePath());
     setState(() {
       messages = rustMessages
           .map((m) => {
@@ -55,13 +62,11 @@ class _ChatScreenState extends State<ChatScreen> {
     }
 
     if (messageText.isNotEmpty) {
-      DateTime timeNow = DateTime.now().toUtc();
-
       await addMessage(
-        sender: 'Me',
-        text: messageText,
-        isMe: true,
-      );
+          sender: 'Me',
+          text: messageText,
+          isMe: true,
+          filePath: await getMessagesFilePath());
 
       //Reload messages from Rust
       _loadMessages();
