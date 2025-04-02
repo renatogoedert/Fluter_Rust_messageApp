@@ -9,12 +9,9 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`
 
 Future<void> addMessage(
-        {required String sender,
-        required String text,
-        required String time,
-        required bool isMe}) =>
+        {required String sender, required String text, required bool isMe}) =>
     RustLib.instance.api
-        .crateAddMessage(sender: sender, text: text, time: time, isMe: isMe);
+        .crateAddMessage(sender: sender, text: text, isMe: isMe);
 
 Future<List<Message>> getMessages() => RustLib.instance.api.crateGetMessages();
 

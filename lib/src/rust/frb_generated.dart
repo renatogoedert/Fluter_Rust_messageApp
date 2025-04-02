@@ -81,10 +81,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 
 abstract class RustLibApi extends BaseApi {
   Future<void> crateAddMessage(
-      {required String sender,
-      required String text,
-      required String time,
-      required bool isMe});
+      {required String sender, required String text, required bool isMe});
 
   Future<List<Message>> crateGetMessages();
 
@@ -103,16 +100,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @override
   Future<void> crateAddMessage(
-      {required String sender,
-      required String text,
-      required String time,
-      required bool isMe}) {
+      {required String sender, required String text, required bool isMe}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(sender, serializer);
         sse_encode_String(text, serializer);
-        sse_encode_String(time, serializer);
         sse_encode_bool(isMe, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 1, port: port_);
@@ -122,14 +115,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeErrorData: null,
       ),
       constMeta: kCrateAddMessageConstMeta,
-      argValues: [sender, text, time, isMe],
+      argValues: [sender, text, isMe],
       apiImpl: this,
     ));
   }
 
   TaskConstMeta get kCrateAddMessageConstMeta => const TaskConstMeta(
         debugName: "add_message",
-        argNames: ["sender", "text", "time", "isMe"],
+        argNames: ["sender", "text", "isMe"],
       );
 
   @override

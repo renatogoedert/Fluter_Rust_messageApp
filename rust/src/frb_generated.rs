@@ -69,13 +69,12 @@ fn wire__crate__add_message_impl(
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_sender = <String>::sse_decode(&mut deserializer);
             let api_text = <String>::sse_decode(&mut deserializer);
-            let api_time = <String>::sse_decode(&mut deserializer);
             let api_is_me = <bool>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        crate::add_message(api_sender, api_text, api_time, api_is_me);
+                        crate::add_message(api_sender, api_text, api_is_me);
                     })?;
                     Ok(output_ok)
                 })())

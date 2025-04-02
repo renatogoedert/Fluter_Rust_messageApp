@@ -3,7 +3,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:fluter_rust_message_app/src/rust/lib.dart';
+import '../src/rust/lib.dart';
 
 import '../Components/message_create.dart';
 import '../Components/message_list.dart';
@@ -21,15 +21,17 @@ class _ChatScreenState extends State<ChatScreen> {
   //Controler for message text
   final TextEditingController _messageControler = TextEditingController();
 
-  //Mock data
+  //Variable to hold the messages
   List<Map<String, Object>> messages = [];
 
+  //Initiate State loading messages from Rust
   @override
   void initState() {
     super.initState();
-    _loadMessages();
+    // _loadMessages();
   }
 
+  //Lead Message Function
   Future<void> _loadMessages() async {
     final rustMessages = await getMessages();
     setState(() {
@@ -44,25 +46,20 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-//Send Message Function
+  //Send Message Function
   void _sendMessage() async {
-    //Get message text
     String messageText = _messageControler.text.trim();
 
-    //Debug Print
     if (kDebugMode) {
       print('Message text to be added: $messageText');
     }
 
     if (messageText.isNotEmpty) {
-      //Get current time
-      String timeNow = TimeOfDay.now().format(context);
+      DateTime timeNow = DateTime.now().toUtc();
 
-      //Add message to Rust storage
       await addMessage(
         sender: 'Me',
         text: messageText,
-        time: timeNow,
         isMe: true,
       );
 
@@ -72,7 +69,6 @@ class _ChatScreenState extends State<ChatScreen> {
       //Clear the input field
       _messageControler.clear();
 
-      //Confirmation log
       if (kDebugMode) {
         print("Message added to Rust and UI updated!");
       }
