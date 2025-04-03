@@ -4,6 +4,8 @@
 
 import 'package:fluter_rust_message_app/Screen/chat_screen.dart'
     show ChatScreen;
+import 'package:fluter_rust_message_app/Screen/dashboard_screen.dart'
+    show DashboardScreen;
 import 'package:flutter/material.dart';
 import 'package:fluter_rust_message_app/src/rust/frb_generated.dart';
 
@@ -26,7 +28,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const ChatScreen(title: "Chat"),
+      home: DashboardScreen(title: 'Dashboard'),
     );
   }
 }

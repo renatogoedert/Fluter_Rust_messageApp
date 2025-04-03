@@ -37,6 +37,13 @@ class _ChatScreenState extends State<ChatScreen> {
     _loadMessages();
   }
 
+  //Handles the dispose of the controller
+  @override
+  void dispose() {
+    _messageControler.dispose();
+    super.dispose();
+  }
+
   //Lead Message Function
   Future<void> _loadMessages() async {
     final rustMessages =
