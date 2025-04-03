@@ -1,0 +1,2 @@
+C:/Fluter_Rust_messageApp/android/app/.cxx/Debug/6z2x6926/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Fluter_Rust_messageApp/android/app/.cxx/Debug/6z2x6926/armeabi-v7a/CMakeFiles/rebuild_cache.dir

@@ -15,6 +15,7 @@ dependencies:
   rust_lib_fluter_rust_message_app:
     path: rust_builder
   flutter_rust_bridge: 2.9.0
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:

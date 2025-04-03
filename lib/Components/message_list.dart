@@ -1,5 +1,7 @@
 //Code Developed By Renato Francisco Goedert
 
+import 'package:fluter_rust_message_app/utils/date_time.dart'
+    show formatISOTime;
 import 'package:flutter/material.dart';
 
 class MessageList extends StatelessWidget {
@@ -36,7 +38,7 @@ class MessageList extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        message['time'],
+                        formatISOTime(message['time']),
                         style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       )
                     ],
