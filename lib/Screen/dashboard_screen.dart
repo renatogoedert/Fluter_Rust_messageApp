@@ -47,8 +47,48 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _addNewConversation() async {
-    print("add conversation button pressed!");
-    addConversation(filePath: await getConversationsFilePath(), title: "title");
+    final TextEditingController controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('New Conversation'),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            decoration:
+                const InputDecoration(hintText: 'Enter conversation title'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Create'),
+              onPressed: () async {
+                final title = controller.text.trim();
+                if (title.isNotEmpty) {
+                  Navigator.of(context).pop(); // Close the dialog
+
+                  // Add conversation using Rust
+                  await addConversation(
+                    filePath: await getConversationsFilePath(),
+                    title: title,
+                  );
+
+                  // Reload conversations
+                  await _loadConversarions();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
