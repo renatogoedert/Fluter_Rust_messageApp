@@ -6,8 +6,8 @@
 import 'frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `load_messages`, `save_messages`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`
+// These functions are ignored because they are not marked as `pub`: `load_conversations`, `load_messages`, `save_conversations`, `save_messages`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`
 
 Future<void> addMessage(
         {required String filePath,
@@ -19,6 +19,37 @@ Future<void> addMessage(
 
 Future<List<Message>> getMessages({required String filePath}) =>
     RustLib.instance.api.crateGetMessages(filePath: filePath);
+
+Future<void> addConversation(
+        {required String filePath, required String title}) =>
+    RustLib.instance.api.crateAddConversation(filePath: filePath, title: title);
+
+Future<List<Conversation>> getConversations({required String filePath}) =>
+    RustLib.instance.api.crateGetConversations(filePath: filePath);
+
+class Conversation {
+  final String id;
+  final String title;
+  final List<Message> messages;
+
+  const Conversation({
+    required this.id,
+    required this.title,
+    required this.messages,
+  });
+
+  @override
+  int get hashCode => id.hashCode ^ title.hashCode ^ messages.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Conversation &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          title == other.title &&
+          messages == other.messages;
+}
 
 class Message {
   final String sender;

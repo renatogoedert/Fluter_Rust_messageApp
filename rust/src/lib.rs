@@ -1,7 +1,7 @@
 pub mod api;
 mod frb_generated;
 
-use std::fs::{File, OpenOptions};
+use std::fs::{OpenOptions};
 use std::io::{self, Write, Read};
 use std::sync::Mutex;
 use once_cell::sync::Lazy;
@@ -55,3 +55,50 @@ pub fn get_messages(file_path: String) -> Vec<Message> {
     messages
 }
 
+static CONVERSATIONS: Lazy<Mutex<Vec<Conversation>>> = Lazy::new(|| Mutex::new(Vec::new()));
+
+// #[frb(json_serializable)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct Conversation {
+    pub id: String,
+    pub title: String,
+    pub messages: Vec<Message>,
+}
+
+fn save_conversations(file_path: &str, conversations: &Vec<Conversation>) -> io::Result<()> {
+    let file = OpenOptions::new().write(true).create(true).truncate(true).open(file_path)?;
+    let mut f = std::io::BufWriter::new(file);
+    let data = serde_json::to_string(conversations).unwrap();
+    f.write_all(data.as_bytes())?;
+    Ok(())
+}
+
+fn load_conversations(file_path: &str) -> io::Result<Vec<Conversation>> {
+    let file = OpenOptions::new().read(true).open(file_path);
+    match file {
+        Ok(mut f) => {
+            let mut contents = String::new();
+            f.read_to_string(&mut contents)?;
+            let conversations: Vec<Conversation> = serde_json::from_str(&contents).unwrap_or_else(|_| Vec::new());
+            Ok(conversations)
+        }
+        Err(_) => Ok(Vec::new()),
+    }
+}
+
+#[flutter_rust_bridge::frb]
+pub fn add_conversation(file_path: String, title: String) {
+    let id = Utc::now().to_rfc3339();
+    let messages =  Vec::new();
+    let mut conversations = CONVERSATIONS.lock().unwrap();
+    conversations.push(Conversation { id, title, messages });
+    save_conversations(&file_path, &conversations).expect("Failed to save conversations");
+}
+
+#[flutter_rust_bridge::frb]
+pub fn get_conversations(file_path: String) -> Vec<Conversation> {
+    let conversations = load_conversations(&file_path).unwrap_or_else(|_| Vec::new());
+    let mut convs = CONVERSATIONS.lock().unwrap();
+    *convs = conversations.clone();
+    conversations
+}

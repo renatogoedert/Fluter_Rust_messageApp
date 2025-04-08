@@ -28,6 +28,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool dco_decode_bool(dynamic raw);
 
   @protected
+  Conversation dco_decode_conversation(dynamic raw);
+
+  @protected
+  List<Conversation> dco_decode_list_conversation(dynamic raw);
+
+  @protected
   List<Message> dco_decode_list_message(dynamic raw);
 
   @protected
@@ -47,6 +53,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   bool sse_decode_bool(SseDeserializer deserializer);
+
+  @protected
+  Conversation sse_decode_conversation(SseDeserializer deserializer);
+
+  @protected
+  List<Conversation> sse_decode_list_conversation(SseDeserializer deserializer);
 
   @protected
   List<Message> sse_decode_list_message(SseDeserializer deserializer);
@@ -71,6 +83,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_conversation(Conversation self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_conversation(
+      List<Conversation> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_message(List<Message> self, SseSerializer serializer);
