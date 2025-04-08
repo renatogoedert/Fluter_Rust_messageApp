@@ -27,6 +27,10 @@ Future<void> addConversation(
 Future<List<Conversation>> getConversations({required String filePath}) =>
     RustLib.instance.api.crateGetConversations(filePath: filePath);
 
+Future<void> deleteConversation(
+        {required String filePath, required String id}) =>
+    RustLib.instance.api.crateDeleteConversation(filePath: filePath, id: id);
+
 class Conversation {
   final String id;
   final String title;

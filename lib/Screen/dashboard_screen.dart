@@ -82,6 +82,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
+  void _deleteConversation(String id) async {
+    await deleteConversation(
+      filePath: await getConversationsFilePath(),
+      id: id,
+    );
+    await _loadConversarions();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,7 +97,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text(widget.title),
         ),
-        body: ConversationList(conversations: conversations),
+        body: ConversationList(
+          conversations: conversations,
+          onDelete: _deleteConversation,
+        ),
         floatingActionButton: ConversationCreate(
           controller: _titleController,
           onSend: _sendConversation,

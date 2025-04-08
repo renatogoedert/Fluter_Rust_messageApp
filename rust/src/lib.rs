@@ -102,3 +102,14 @@ pub fn get_conversations(file_path: String) -> Vec<Conversation> {
     *convs = conversations.clone();
     conversations
 }
+
+#[flutter_rust_bridge::frb]
+pub fn delete_conversation(file_path: String, id: String) {
+    let mut conversations = load_conversations(&file_path).unwrap_or_default();
+    conversations.retain(|c| c.id != id);
+    
+    let mut convs = CONVERSATIONS.lock().unwrap();
+    *convs = conversations.clone();
+    
+    save_conversations(&file_path, &conversations).expect("Failed to save conversations after delete");
+}
