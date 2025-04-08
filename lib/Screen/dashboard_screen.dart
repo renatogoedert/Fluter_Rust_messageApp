@@ -1,10 +1,11 @@
+import 'package:fluter_rust_message_app/Components/conversation_create.dart';
+import 'package:fluter_rust_message_app/Components/conversation_list.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart'
     show getApplicationDocumentsDirectory;
 
 import '../src/rust/lib.dart';
-
-import 'chat_screen.dart'; // Import the chat screen
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key, required this.title});
@@ -16,6 +17,9 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  //Controler for title text
+  final TextEditingController _titleController = TextEditingController();
+
   //Variable to hold the conversations
   List<Map<String, Object>> conversations = [];
 
@@ -29,6 +33,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     _loadConversarions();
+  }
+
+  //Handles the dispose of the controller
+  @override
+  void dispose() {
+    _titleController.dispose();
+    super.dispose();
   }
 
   //Lead Message Function
@@ -46,77 +57,43 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-  void _addNewConversation() async {
-    final TextEditingController controller = TextEditingController();
+  //Send Message Function
+  void _sendConversation() async {
+    String title = _titleController.text.trim();
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('New Conversation'),
-          content: TextField(
-            controller: controller,
-            autofocus: true,
-            decoration:
-                const InputDecoration(hintText: 'Enter conversation title'),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Create'),
-              onPressed: () async {
-                final title = controller.text.trim();
-                if (title.isNotEmpty) {
-                  Navigator.of(context).pop(); // Close the dialog
+    if (kDebugMode) {
+      print('Conversation title to be added: $title');
+    }
 
-                  // Add conversation using Rust
-                  await addConversation(
-                    filePath: await getConversationsFilePath(),
-                    title: title,
-                  );
+    if (title.isNotEmpty) {
+      await addConversation(
+        filePath: await getConversationsFilePath(),
+        title: title,
+      );
 
-                  // Reload conversations
-                  await _loadConversarions();
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
+      _titleController.clear();
+
+      //Reload messages from Rust
+      _loadConversarions();
+
+      if (kDebugMode) {
+        print("Conversation added to Rust and UI updated!");
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(8),
-        itemCount: conversations.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-              title: Text(conversations[index]['title'] as String),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ChatScreen(title: 'Chat')));
-              });
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addNewConversation,
-        tooltip: 'Add Conversation',
-        child: const Icon(Icons.add),
-      ),
-    );
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.title),
+        ),
+        body: ConversationList(conversations: conversations),
+        floatingActionButton: ConversationCreate(
+          controller: _titleController,
+          onSend: _sendConversation,
+          context: context,
+        ));
   }
 }
