@@ -55,6 +55,33 @@ pub fn get_messages(file_path: String) -> Vec<Message> {
     messages
 }
 
+#[flutter_rust_bridge::frb]
+pub fn add_message_to_conversation(file_path: String, conversation_id: String, sender: String, text: String, is_me:bool){
+    let time = Utc::now().to_rfc3339();
+    let new_message = Message { sender, text, time, is_me};
+
+    let mut conversations = load_conversations(&file_path).unwrap_or_default();
+
+    if let Some(conv) = conversations.iter_mut().find(|c| c.id == conversation_id) {
+        conv.messages.push(new_message);
+    }
+
+    let mut convs = CONVERSATIONS.lock().unwrap();
+    *convs = conversations.clone();
+
+    save_conversations(&file_path, &conversations).expect("Failed to add Message to conversation")
+}
+
+#[flutter_rust_bridge::frb]
+pub fn get_messages_for_conversation(file_path: String, conversation_id: String) -> Vec<Message> {
+    let conversations = load_conversations(&file_path).unwrap_or_default();
+    conversations
+        .into_iter()
+        .find(|c| c.id == conversation_id)
+        .map(|c| c.messages)
+        .unwrap_or_default()
+}
+
 static CONVERSATIONS: Lazy<Mutex<Vec<Conversation>>> = Lazy::new(|| Mutex::new(Vec::new()));
 
 // #[frb(json_serializable)]

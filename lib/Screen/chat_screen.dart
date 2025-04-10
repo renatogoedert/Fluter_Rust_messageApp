@@ -10,9 +10,11 @@ import '../Components/message_create.dart';
 import '../Components/message_list.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key, required this.title});
+  const ChatScreen(
+      {super.key, required this.title, required this.conversationId});
 
   final String title;
+  final String conversationId;
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -27,7 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<String> getMessagesFilePath() async {
     final directory = await getApplicationDocumentsDirectory();
-    return '${directory.path}/messages.txt';
+    return '${directory.path}/conversations.txt';
   }
 
   //Initiate State loading messages from Rust
@@ -46,8 +48,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   //Lead Message Function
   Future<void> _loadMessages() async {
-    final rustMessages =
-        await getMessages(filePath: await getMessagesFilePath());
+    final rustMessages = await getMessagesForConversation(
+        filePath: await getMessagesFilePath(),
+        conversationId: widget.conversationId);
     setState(() {
       messages = rustMessages
           .map((m) => {
@@ -69,11 +72,12 @@ class _ChatScreenState extends State<ChatScreen> {
     }
 
     if (messageText.isNotEmpty) {
-      await addMessage(
+      await addMessageToConversation(
           sender: 'Me',
           text: messageText,
           isMe: true,
-          filePath: await getMessagesFilePath());
+          filePath: await getMessagesFilePath(),
+          conversationId: widget.conversationId);
 
       //Reload messages from Rust
       _loadMessages();

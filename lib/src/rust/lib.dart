@@ -20,6 +20,24 @@ Future<void> addMessage(
 Future<List<Message>> getMessages({required String filePath}) =>
     RustLib.instance.api.crateGetMessages(filePath: filePath);
 
+Future<void> addMessageToConversation(
+        {required String filePath,
+        required String conversationId,
+        required String sender,
+        required String text,
+        required bool isMe}) =>
+    RustLib.instance.api.crateAddMessageToConversation(
+        filePath: filePath,
+        conversationId: conversationId,
+        sender: sender,
+        text: text,
+        isMe: isMe);
+
+Future<List<Message>> getMessagesForConversation(
+        {required String filePath, required String conversationId}) =>
+    RustLib.instance.api.crateGetMessagesForConversation(
+        filePath: filePath, conversationId: conversationId);
+
 Future<void> addConversation(
         {required String filePath, required String title}) =>
     RustLib.instance.api.crateAddConversation(filePath: filePath, title: title);

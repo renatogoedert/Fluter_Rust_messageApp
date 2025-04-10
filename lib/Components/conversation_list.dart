@@ -56,7 +56,10 @@ class ConversationList extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ChatScreen(title: title),
+                  builder: (context) => ChatScreen(
+                    title: title,
+                    conversationId: id,
+                  ),
                 ),
               );
             },
