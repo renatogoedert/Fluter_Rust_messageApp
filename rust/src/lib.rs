@@ -18,6 +18,7 @@ pub struct Message {
     pub is_me: bool,
 }
 
+/* Deprecated
 fn load_messages(file_path: &str) -> io::Result<Vec<Message>> {
     let file = OpenOptions::new().read(true).open(file_path);
     match file {
@@ -30,7 +31,9 @@ fn load_messages(file_path: &str) -> io::Result<Vec<Message>> {
         Err(_) => Ok(Vec::new()),
     }
 }
+*/
 
+/* Deprecated
 fn save_messages(file_path: &str, messages: &Vec<Message>) -> io::Result<()> {
     let file = OpenOptions::new().write(true).create(true).truncate(true).open(file_path)?;
     let mut f = std::io::BufWriter::new(file);
@@ -38,7 +41,9 @@ fn save_messages(file_path: &str, messages: &Vec<Message>) -> io::Result<()> {
     f.write_all(data.as_bytes())?;
     Ok(())
 }
+*/
 
+/* Deprecated
 #[flutter_rust_bridge::frb]
 pub fn add_message(file_path: String, sender: String, text: String, is_me: bool) {
     let time = Utc::now().to_rfc3339();
@@ -46,7 +51,9 @@ pub fn add_message(file_path: String, sender: String, text: String, is_me: bool)
     messages.push(Message { sender, text, time, is_me });
     save_messages(&file_path, &messages).expect("Failed to save messages");
 }
+*/
 
+/* Deprecated
 #[flutter_rust_bridge::frb]
 pub fn get_messages(file_path: String) -> Vec<Message> {
     let messages = load_messages(&file_path).unwrap_or_else(|_| Vec::new());
@@ -54,6 +61,7 @@ pub fn get_messages(file_path: String) -> Vec<Message> {
     *msgs = messages.clone();
     messages
 }
+*/
 
 #[flutter_rust_bridge::frb]
 pub fn add_message_to_conversation(file_path: String, conversation_id: String, sender: String, text: String, is_me:bool){

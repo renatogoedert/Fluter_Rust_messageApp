@@ -6,19 +6,8 @@
 import 'frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `load_conversations`, `load_messages`, `save_conversations`, `save_messages`
+// These functions are ignored because they are not marked as `pub`: `load_conversations`, `save_conversations`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`
-
-Future<void> addMessage(
-        {required String filePath,
-        required String sender,
-        required String text,
-        required bool isMe}) =>
-    RustLib.instance.api.crateAddMessage(
-        filePath: filePath, sender: sender, text: text, isMe: isMe);
-
-Future<List<Message>> getMessages({required String filePath}) =>
-    RustLib.instance.api.crateGetMessages(filePath: filePath);
 
 Future<void> addMessageToConversation(
         {required String filePath,

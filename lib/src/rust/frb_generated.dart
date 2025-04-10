@@ -69,7 +69,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.9.0';
 
   @override
-  int get rustContentHash => -809700347;
+  int get rustContentHash => 1627568011;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -83,12 +83,6 @@ abstract class RustLibApi extends BaseApi {
   Future<void> crateAddConversation(
       {required String filePath, required String title});
 
-  Future<void> crateAddMessage(
-      {required String filePath,
-      required String sender,
-      required String text,
-      required bool isMe});
-
   Future<void> crateAddMessageToConversation(
       {required String filePath,
       required String conversationId,
@@ -100,8 +94,6 @@ abstract class RustLibApi extends BaseApi {
       {required String filePath, required String id});
 
   Future<List<Conversation>> crateGetConversations({required String filePath});
-
-  Future<List<Message>> crateGetMessages({required String filePath});
 
   Future<List<Message>> crateGetMessagesForConversation(
       {required String filePath, required String conversationId});
@@ -146,37 +138,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<void> crateAddMessage(
-      {required String filePath,
-      required String sender,
-      required String text,
-      required bool isMe}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(filePath, serializer);
-        sse_encode_String(sender, serializer);
-        sse_encode_String(text, serializer);
-        sse_encode_bool(isMe, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 2, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_unit,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateAddMessageConstMeta,
-      argValues: [filePath, sender, text, isMe],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateAddMessageConstMeta => const TaskConstMeta(
-        debugName: "add_message",
-        argNames: ["filePath", "sender", "text", "isMe"],
-      );
-
-  @override
   Future<void> crateAddMessageToConversation(
       {required String filePath,
       required String conversationId,
@@ -192,7 +153,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(text, serializer);
         sse_encode_bool(isMe, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 3, port: port_);
+            funcId: 2, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -219,7 +180,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(filePath, serializer);
         sse_encode_String(id, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 4, port: port_);
+            funcId: 3, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -243,7 +204,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(filePath, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 5, port: port_);
+            funcId: 4, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_conversation,
@@ -261,30 +222,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<List<Message>> crateGetMessages({required String filePath}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(filePath, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 6, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_list_message,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateGetMessagesConstMeta,
-      argValues: [filePath],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateGetMessagesConstMeta => const TaskConstMeta(
-        debugName: "get_messages",
-        argNames: ["filePath"],
-      );
-
-  @override
   Future<List<Message>> crateGetMessagesForConversation(
       {required String filePath, required String conversationId}) {
     return handler.executeNormal(NormalTask(
@@ -293,7 +230,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(filePath, serializer);
         sse_encode_String(conversationId, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 7, port: port_);
+            funcId: 5, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_message,
@@ -317,7 +254,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(name, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -340,7 +277,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 9, port: port_);
+            funcId: 7, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
