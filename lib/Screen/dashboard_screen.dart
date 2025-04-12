@@ -1,5 +1,6 @@
 import 'package:fluter_rust_message_app/Components/conversation_create.dart';
 import 'package:fluter_rust_message_app/Components/conversation_list.dart';
+import 'package:fluter_rust_message_app/Components/top_bar_profile.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart'
@@ -95,7 +96,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(widget.title),
+          title: TopBarProfile(
+            name: "Homer",
+            imageUrl:
+                "https://upload.wikimedia.org/wikipedia/commons/1/1c/Homer_British_Museum.jpg",
+          ),
         ),
         body: ConversationList(
           conversations: conversations,
