@@ -1,8 +1,6 @@
-//Code Developed By Renato Francisco Goedert
-
 import 'package:flutter/material.dart';
-
 import '../Screen/chat_screen.dart' show ChatScreen;
+import 'conversation_list_item.dart'; // Import the new file
 
 class ConversationList extends StatelessWidget {
   const ConversationList(
@@ -18,9 +16,7 @@ class ConversationList extends StatelessWidget {
       itemCount: conversations.length,
       itemBuilder: (context, index) {
         final conversation = conversations[index];
-        final title = conversation['title'] as String;
         final id = conversation['id'] as String;
-
         return Dismissible(
           key: Key(id),
           direction: DismissDirection.endToStart,
@@ -35,7 +31,8 @@ class ConversationList extends StatelessWidget {
               context: context,
               builder: (context) => AlertDialog(
                 title: const Text("Delete Conversation"),
-                content: Text("Are you sure you want to delete '$title'?"),
+                content: Text(
+                    "Are you sure you want to delete '${conversation['title']}'?"),
                 actions: [
                   TextButton(
                     child: const Text("Cancel"),
@@ -50,20 +47,8 @@ class ConversationList extends StatelessWidget {
             );
           },
           onDismissed: (_) => onDelete(id),
-          child: ListTile(
-            title: Text(title),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatScreen(
-                    title: title,
-                    conversationId: id,
-                  ),
-                ),
-              );
-            },
-          ),
+          child: ConversationListItem(
+              conversation: conversation), // Use the new widget here
         );
       },
     );
