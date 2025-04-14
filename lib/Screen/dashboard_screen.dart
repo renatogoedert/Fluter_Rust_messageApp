@@ -69,7 +69,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     if (kDebugMode) {
       print('Conversation title to be added: $title');
-      print('Conversation title to be added: $avatarUrl');
     }
 
     if (title.isNotEmpty) {
@@ -99,6 +98,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
     await _loadConversarions();
   }
 
+  void _uploadAvatar(String id) async {
+    String avatarUrl = _avatarUrlController.text.trim();
+
+    if (kDebugMode) {
+      print('Conversation id to be updated: $id');
+    }
+
+    if (avatarUrl.isNotEmpty) {
+      await updateAvatarForConversation(
+          filePath: await getConversationsFilePath(),
+          conversationId: id,
+          avatarUrl: avatarUrl);
+    }
+
+    _avatarUrlController.clear();
+
+    //Reload conversations from Rust
+    _loadConversarions();
+
+    if (kDebugMode) {
+      print("Conversation added to Rust and UI updated!");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,7 +135,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         body: ConversationList(
           conversations: conversations,
+          avatarUrlController: _avatarUrlController,
           onDelete: _deleteConversation,
+          uploadAvatar: _uploadAvatar,
           toLoad: _loadConversarions,
         ),
         floatingActionButton: ConversationCreate(

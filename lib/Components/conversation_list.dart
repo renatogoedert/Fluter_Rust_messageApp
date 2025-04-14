@@ -5,12 +5,16 @@ class ConversationList extends StatelessWidget {
   const ConversationList(
       {super.key,
       required this.conversations,
+      required this.avatarUrlController,
+      required this.uploadAvatar,
       required this.onDelete,
       required this.toLoad});
 
   final List<Map<String, Object?>> conversations;
   final void Function(String id) onDelete;
   final void Function() toLoad;
+  final void Function(String id) uploadAvatar;
+  final TextEditingController avatarUrlController;
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +54,13 @@ class ConversationList extends StatelessWidget {
             );
           },
           onDismissed: (_) => onDelete(id),
-          child:
-              ConversationListItem(conversation: conversation, toLoad: toLoad),
+          child: ConversationListItem(
+            conversation: conversation,
+            toLoad: toLoad,
+            context: context,
+            avatarUrlController: avatarUrlController,
+            uploadAvatar: uploadAvatar,
+          ),
         );
       },
     );
