@@ -4,7 +4,7 @@ import 'package:fluter_rust_message_app/src/rust/lib.dart';
 import 'package:flutter/material.dart';
 
 class ConversationListItem extends StatelessWidget {
-  final Map<String, Object> conversation;
+  final Map<String, Object?> conversation;
   final void Function() toLoad;
 
   const ConversationListItem(

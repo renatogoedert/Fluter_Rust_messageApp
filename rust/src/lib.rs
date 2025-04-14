@@ -1,12 +1,12 @@
 pub mod api;
 mod frb_generated;
 
-use std::fs::{OpenOptions};
-use std::io::{self, Write, Read};
-use std::sync::Mutex;
-use once_cell::sync::Lazy;
-use serde::{Serialize, Deserialize};
 use chrono::Utc;
+use once_cell::sync::Lazy;
+use serde::{Deserialize, Serialize};
+use std::fs::OpenOptions;
+use std::io::{self, Read, Write};
+use std::sync::Mutex;
 
 static MESSAGES: Lazy<Mutex<Vec<Message>>> = Lazy::new(|| Mutex::new(Vec::new()));
 
@@ -64,9 +64,20 @@ pub fn get_messages(file_path: String) -> Vec<Message> {
 */
 
 #[flutter_rust_bridge::frb]
-pub fn add_message_to_conversation(file_path: String, conversation_id: String, sender: String, text: String, is_me:bool){
+pub fn add_message_to_conversation(
+    file_path: String,
+    conversation_id: String,
+    sender: String,
+    text: String,
+    is_me: bool,
+) {
     let time = Utc::now().to_rfc3339();
-    let new_message = Message { sender, text, time, is_me};
+    let new_message = Message {
+        sender,
+        text,
+        time,
+        is_me,
+    };
 
     let mut conversations = load_conversations(&file_path).unwrap_or_default();
 
@@ -97,12 +108,16 @@ static CONVERSATIONS: Lazy<Mutex<Vec<Conversation>>> = Lazy::new(|| Mutex::new(V
 pub struct Conversation {
     pub id: String,
     pub title: String,
-    pub avatar_url: String,
+    pub avatar_url: Option<String>,
     pub messages: Vec<Message>,
 }
 
 fn save_conversations(file_path: &str, conversations: &Vec<Conversation>) -> io::Result<()> {
-    let file = OpenOptions::new().write(true).create(true).truncate(true).open(file_path)?;
+    let file = OpenOptions::new()
+        .write(true)
+        .create(true)
+        .truncate(true)
+        .open(file_path)?;
     let mut f = std::io::BufWriter::new(file);
     let data = serde_json::to_string(conversations).unwrap();
     f.write_all(data.as_bytes())?;
@@ -115,7 +130,8 @@ fn load_conversations(file_path: &str) -> io::Result<Vec<Conversation>> {
         Ok(mut f) => {
             let mut contents = String::new();
             f.read_to_string(&mut contents)?;
-            let conversations: Vec<Conversation> = serde_json::from_str(&contents).unwrap_or_else(|_| Vec::new());
+            let conversations: Vec<Conversation> =
+                serde_json::from_str(&contents).unwrap_or_else(|_| Vec::new());
             Ok(conversations)
         }
         Err(_) => Ok(Vec::new()),
@@ -123,11 +139,16 @@ fn load_conversations(file_path: &str) -> io::Result<Vec<Conversation>> {
 }
 
 #[flutter_rust_bridge::frb]
-pub fn add_conversation(file_path: String, title: String, avatar_url: String) {
+pub fn add_conversation(file_path: String, title: String, avatar_url: Option<String>) {
     let id = Utc::now().to_rfc3339();
-    let messages =  Vec::new();
+    let messages = Vec::new();
     let mut conversations = CONVERSATIONS.lock().unwrap();
-    conversations.push(Conversation { id, title, messages, avatar_url });
+    conversations.push(Conversation {
+        id,
+        title,
+        messages,
+        avatar_url: Some(avatar_url.expect("REASON")),
+    });
     save_conversations(&file_path, &conversations).expect("Failed to save conversations");
 }
 
@@ -143,11 +164,34 @@ pub fn get_conversations(file_path: String) -> Vec<Conversation> {
 pub fn delete_conversation(file_path: String, id: String) {
     let mut conversations = load_conversations(&file_path).unwrap_or_default();
     conversations.retain(|c| c.id != id);
-    
+
     let mut convs = CONVERSATIONS.lock().unwrap();
     *convs = conversations.clone();
-    
-    save_conversations(&file_path, &conversations).expect("Failed to save conversations after delete");
+
+    save_conversations(&file_path, &conversations)
+        .expect("Failed to save conversations after delete");
+}
+
+#[flutter_rust_bridge::frb]
+pub fn update_avatar_for_conversation(
+    file_path: String,
+    conversation_id: String,
+    avatar_url: String,
+) {
+    let mut conversations = load_conversations(&file_path).unwrap_or_default();
+
+    for conversation in &mut conversations {
+        if conversation.id == conversation_id {
+            conversation.avatar_url = Some(avatar_url.clone());
+            break;
+        }
+    }
+
+    let mut convs = CONVERSATIONS.lock().unwrap();
+    *convs = conversations.clone();
+
+    save_conversations(&file_path, &conversations)
+        .expect("Failed to save conversations after delete");
 }
 
 // static USERS: Lazy<Mutex<Vec<User>>> = Lazy::new(|| Mutex::new(Vec::new()));
@@ -203,9 +247,9 @@ pub fn delete_conversation(file_path: String, id: String) {
 // pub fn delete_user(file_path: String, id: String) {
 //     let mut users = load_users(&file_path).unwrap_or_default();
 //     users.retain(|c| c.id != id);
-    
+
 //     let mut convs = USERS.lock().unwrap();
 //     *convs = users.clone();
-    
+
 //     save_users(&file_path, &users).expect("Failed to save users after delete");
 // }

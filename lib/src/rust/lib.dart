@@ -28,9 +28,7 @@ Future<List<Message>> getMessagesForConversation(
         filePath: filePath, conversationId: conversationId);
 
 Future<void> addConversation(
-        {required String filePath,
-        required String title,
-        required String avatarUrl}) =>
+        {required String filePath, required String title, String? avatarUrl}) =>
     RustLib.instance.api.crateAddConversation(
         filePath: filePath, title: title, avatarUrl: avatarUrl);
 
@@ -41,16 +39,25 @@ Future<void> deleteConversation(
         {required String filePath, required String id}) =>
     RustLib.instance.api.crateDeleteConversation(filePath: filePath, id: id);
 
+Future<void> updateAvatarForConversation(
+        {required String filePath,
+        required String conversationId,
+        required String avatarUrl}) =>
+    RustLib.instance.api.crateUpdateAvatarForConversation(
+        filePath: filePath,
+        conversationId: conversationId,
+        avatarUrl: avatarUrl);
+
 class Conversation {
   final String id;
   final String title;
-  final String avatarUrl;
+  final String? avatarUrl;
   final List<Message> messages;
 
   const Conversation({
     required this.id,
     required this.title,
-    required this.avatarUrl,
+    this.avatarUrl,
     required this.messages,
   });
 

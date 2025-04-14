@@ -25,7 +25,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final TextEditingController _avatarUrlController = TextEditingController();
 
   //Variable to hold the conversations
-  List<Map<String, Object>> conversations = [];
+  List<Map<String, Object?>> conversations = [];
 
   Future<String> getConversationsFilePath() async {
     final directory = await getApplicationDocumentsDirectory();

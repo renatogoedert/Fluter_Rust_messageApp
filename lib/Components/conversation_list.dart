@@ -8,7 +8,7 @@ class ConversationList extends StatelessWidget {
       required this.onDelete,
       required this.toLoad});
 
-  final List<Map<String, Object>> conversations;
+  final List<Map<String, Object?>> conversations;
   final void Function(String id) onDelete;
   final void Function() toLoad;
 
