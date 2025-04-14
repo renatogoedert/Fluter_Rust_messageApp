@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import '../Screen/chat_screen.dart' show ChatScreen;
-import 'conversation_list_item.dart'; // Import the new file
+import 'conversation_list_item.dart';
 
 class ConversationList extends StatelessWidget {
   const ConversationList(
-      {super.key, required this.conversations, required this.onDelete});
+      {super.key,
+      required this.conversations,
+      required this.onDelete,
+      required this.toLoad});
 
   final List<Map<String, Object>> conversations;
   final void Function(String id) onDelete;
+  final void Function() toLoad;
 
   @override
   Widget build(BuildContext context) {
@@ -47,8 +50,8 @@ class ConversationList extends StatelessWidget {
             );
           },
           onDismissed: (_) => onDelete(id),
-          child: ConversationListItem(
-              conversation: conversation), // Use the new widget here
+          child:
+              ConversationListItem(conversation: conversation, toLoad: toLoad),
         );
       },
     );

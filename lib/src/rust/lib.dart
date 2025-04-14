@@ -6,8 +6,8 @@
 import 'frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `load_conversations`, `save_conversations`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`
+// These functions are ignored because they are not marked as `pub`: `load_conversations`, `load_users`, `save_conversations`, `save_users`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`
 
 Future<void> addMessageToConversation(
         {required String filePath,
@@ -37,6 +37,19 @@ Future<List<Conversation>> getConversations({required String filePath}) =>
 Future<void> deleteConversation(
         {required String filePath, required String id}) =>
     RustLib.instance.api.crateDeleteConversation(filePath: filePath, id: id);
+
+Future<void> addUser(
+        {required String filePath,
+        required String name,
+        required String avatarUrl}) =>
+    RustLib.instance.api
+        .crateAddUser(filePath: filePath, name: name, avatarUrl: avatarUrl);
+
+Future<List<User>> getUsers({required String filePath}) =>
+    RustLib.instance.api.crateGetUsers(filePath: filePath);
+
+Future<void> deleteUser({required String filePath, required String id}) =>
+    RustLib.instance.api.crateDeleteUser(filePath: filePath, id: id);
 
 class Conversation {
   final String id;
@@ -88,4 +101,32 @@ class Message {
           text == other.text &&
           time == other.time &&
           isMe == other.isMe;
+}
+
+class User {
+  final String id;
+  final String name;
+  final String avatarUrl;
+  final List<Conversation> conversations;
+
+  const User({
+    required this.id,
+    required this.name,
+    required this.avatarUrl,
+    required this.conversations,
+  });
+
+  @override
+  int get hashCode =>
+      id.hashCode ^ name.hashCode ^ avatarUrl.hashCode ^ conversations.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is User &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          avatarUrl == other.avatarUrl &&
+          conversations == other.conversations;
 }

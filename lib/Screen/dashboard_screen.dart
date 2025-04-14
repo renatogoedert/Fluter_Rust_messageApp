@@ -105,6 +105,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         body: ConversationList(
           conversations: conversations,
           onDelete: _deleteConversation,
+          toLoad: _loadConversarions,
         ),
         floatingActionButton: ConversationCreate(
           controller: _titleController,
