@@ -21,6 +21,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   //Controler for title text
   final TextEditingController _titleController = TextEditingController();
 
+  //Controler for Avatar Url text
+  final TextEditingController _avatarUrlController = TextEditingController();
+
   //Variable to hold the conversations
   List<Map<String, Object>> conversations = [];
 
@@ -52,6 +55,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           .map((c) => {
                 'id': c.id,
                 'title': c.title,
+                'avatarUrl': c.avatarUrl,
                 'messages': c.messages,
               })
           .toList();
@@ -61,18 +65,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
   //Send Message Function
   void _sendConversation() async {
     String title = _titleController.text.trim();
+    String avatarUrl = _avatarUrlController.text.trim();
 
     if (kDebugMode) {
       print('Conversation title to be added: $title');
+      print('Conversation title to be added: $avatarUrl');
     }
 
     if (title.isNotEmpty) {
       await addConversation(
         filePath: await getConversationsFilePath(),
         title: title,
+        avatarUrl: avatarUrl,
       );
 
       _titleController.clear();
+      _avatarUrlController.clear();
 
       //Reload messages from Rust
       _loadConversarions();
@@ -108,7 +116,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           toLoad: _loadConversarions,
         ),
         floatingActionButton: ConversationCreate(
-          controller: _titleController,
+          titleController: _titleController,
+          avatarUrlController: _avatarUrlController,
           onSend: _sendConversation,
           context: context,
         ));

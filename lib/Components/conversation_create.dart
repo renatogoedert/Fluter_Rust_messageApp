@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 class ConversationCreate extends StatelessWidget {
   const ConversationCreate(
       {super.key,
-      required this.controller,
+      required this.titleController,
+      required this.avatarUrlController,
       required this.onSend,
       required this.context});
 
   final VoidCallback onSend;
-  final TextEditingController controller;
+  final TextEditingController titleController;
+  final TextEditingController avatarUrlController;
   final BuildContext context;
 
   void _addNewConversation() async {
@@ -19,11 +21,24 @@ class ConversationCreate extends StatelessWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('New Conversation'),
-          content: TextField(
-            controller: controller,
-            autofocus: true,
-            decoration:
-                const InputDecoration(hintText: 'Enter conversation title'),
+          content: Flexible(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: titleController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                      hintText: 'Enter conversation title'),
+                ),
+                TextField(
+                  controller: avatarUrlController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                      hintText: 'Enter conversation Avatar URL'),
+                ),
+              ],
+            ),
           ),
           actions: <Widget>[
             TextButton(

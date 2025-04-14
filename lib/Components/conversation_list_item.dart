@@ -14,12 +14,12 @@ class ConversationListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final title = conversation['title'] as String;
     final id = conversation['id'] as String;
-    final avatarUrl = conversation['avatar'] as String?;
+    final avatarUrl = conversation['avatarUrl'] as String?;
     final messages = conversation['messages'] as List<Message>?;
 
     return ListTile(
       leading: CircleAvatar(
-        backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
+        backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl) : null,
         radius: 24,
         backgroundColor: Colors.grey[300],
       ),
