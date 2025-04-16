@@ -59,13 +59,19 @@ class ConversationListItem extends StatelessWidget {
 
     return ListTile(
       leading: GestureDetector(
-        onTap: () {
-          _changeAvatarUrl(id);
-        },
-        child: CircleAvatar(
-          backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl) : null,
-          radius: 24,
-          backgroundColor: Colors.grey[300],
+        onTap: () => _changeAvatarUrl(id),
+        child: AnimatedSwitcher(
+          duration: Duration(milliseconds: 500),
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          child: CircleAvatar(
+            key: ValueKey<String?>(avatarUrl),
+            radius: 24,
+            backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl) : null,
+            backgroundColor: Colors.grey[300],
+            child: avatarUrl == null ? Icon(Icons.person, size: 24) : null,
+          ),
         ),
       ),
       title: Text(title),
