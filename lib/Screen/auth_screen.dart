@@ -119,7 +119,12 @@ class _AuthScreenState extends State<AuthScreen> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Padding(
-              padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(18.0),
+            child: AnimatedSwitcher(
+              duration: Duration(milliseconds: 500),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
               child: isLogin
                   ? AuthLoginForm(
                       passwordController: _passwordController,
@@ -140,7 +145,9 @@ class _AuthScreenState extends State<AuthScreen> {
                       onSignIn: _trySignIn,
                       toogleLogin: _toogleLogin,
                       tooglePasswordVisibility: _tooglePasswordVisibility,
-                    )),
+                    ),
+            ),
+          ),
         ),
       ),
     );
