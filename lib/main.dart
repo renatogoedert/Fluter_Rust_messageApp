@@ -2,8 +2,8 @@
 
 // //Code Developed By Renato Francisco Goedert
 
-import 'package:fluter_rust_message_app/Screen/chat_screen.dart'
-    show ChatScreen;
+import 'package:fluter_rust_message_app/Screen/auth_screen.dart'
+    show AuthScreen;
 import 'package:fluter_rust_message_app/Screen/dashboard_screen.dart'
     show DashboardScreen;
 import 'package:flutter/material.dart';
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: DashboardScreen(title: 'Dashboard'),
+      home: AuthScreen(),
     );
   }
 }
