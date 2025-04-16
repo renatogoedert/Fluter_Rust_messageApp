@@ -2,37 +2,37 @@
 
 import 'package:flutter/material.dart';
 
-class AuthLoginForm extends StatelessWidget {
-  const AuthLoginForm({
+class AuthSignInForm extends StatelessWidget {
+  const AuthSignInForm({
     super.key,
     required this.passwordController,
+    required this.confirmPasswordController,
     required this.emailController,
-    required this.loginFormKey,
-    required this.onLogin,
-    required this.errorText,
+    required this.singInFormKey,
+    required this.onSignIn,
     required this.toogleLogin,
     required this.isPasswordVisible,
     required this.tooglePasswordVisibility,
   });
 
   final TextEditingController passwordController;
+  final TextEditingController confirmPasswordController;
   final TextEditingController emailController;
-  final GlobalKey<FormState> loginFormKey;
-  final String errorText;
+  final GlobalKey<FormState> singInFormKey;
   final bool isPasswordVisible;
-  final void Function() onLogin;
+  final void Function() onSignIn;
   final void Function() toogleLogin;
   final void Function() tooglePasswordVisibility;
 
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: loginFormKey,
+      key: singInFormKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Login',
+            'Sign In',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 16),
@@ -58,26 +58,27 @@ class AuthLoginForm extends StatelessWidget {
                 ? null
                 : 'Password must be at least 6 characters',
           ),
+          TextFormField(
+            controller: confirmPasswordController,
+            decoration: InputDecoration(labelText: 'Confirm Password'),
+            obscureText: !isPasswordVisible,
+            validator: (value) =>
+                confirmPasswordController.text == passwordController.text
+                    ? null
+                    : 'Passwords must Match',
+          ),
           SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
-              onLogin();
+              onSignIn();
             },
-            child: Text('Login'),
+            child: Text('Sign In'),
           ),
-          if (errorText.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Text(
-                errorText,
-                style: TextStyle(color: Colors.red),
-              ),
-            ),
           TextButton(
             onPressed: () {
               toogleLogin();
             },
-            child: Text('Create Your account!'),
+            child: Text('Already have an account? Login'),
           ),
         ],
       ),
