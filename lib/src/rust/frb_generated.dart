@@ -92,6 +92,7 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateAddUser(
       {required String filePath,
+      required String email,
       required String name,
       required String password,
       required String avatarUrl});
@@ -117,7 +118,7 @@ abstract class RustLibApi extends BaseApi {
 
   Future<User?> crateValidateUser(
       {required String filePath,
-      required String name,
+      required String email,
       required String password});
 }
 
@@ -193,6 +194,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @override
   Future<void> crateAddUser(
       {required String filePath,
+      required String email,
       required String name,
       required String password,
       required String avatarUrl}) {
@@ -200,6 +202,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(filePath, serializer);
+        sse_encode_String(email, serializer);
         sse_encode_String(name, serializer);
         sse_encode_String(password, serializer);
         sse_encode_String(avatarUrl, serializer);
@@ -211,14 +214,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeErrorData: null,
       ),
       constMeta: kCrateAddUserConstMeta,
-      argValues: [filePath, name, password, avatarUrl],
+      argValues: [filePath, email, name, password, avatarUrl],
       apiImpl: this,
     ));
   }
 
   TaskConstMeta get kCrateAddUserConstMeta => const TaskConstMeta(
         debugName: "add_user",
-        argNames: ["filePath", "name", "password", "avatarUrl"],
+        argNames: ["filePath", "email", "name", "password", "avatarUrl"],
       );
 
   @override
@@ -402,13 +405,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @override
   Future<User?> crateValidateUser(
       {required String filePath,
-      required String name,
+      required String email,
       required String password}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(filePath, serializer);
-        sse_encode_String(name, serializer);
+        sse_encode_String(email, serializer);
         sse_encode_String(password, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 11, port: port_);
@@ -418,14 +421,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeErrorData: null,
       ),
       constMeta: kCrateValidateUserConstMeta,
-      argValues: [filePath, name, password],
+      argValues: [filePath, email, password],
       apiImpl: this,
     ));
   }
 
   TaskConstMeta get kCrateValidateUserConstMeta => const TaskConstMeta(
         debugName: "validate_user",
-        argNames: ["filePath", "name", "password"],
+        argNames: ["filePath", "email", "password"],
       );
 
   @protected
@@ -520,14 +523,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   User dco_decode_user(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 5)
-      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
     return User(
       id: dco_decode_String(arr[0]),
-      name: dco_decode_String(arr[1]),
-      password: dco_decode_String(arr[2]),
-      avatarUrl: dco_decode_String(arr[3]),
-      conversations: dco_decode_list_conversation(arr[4]),
+      email: dco_decode_String(arr[1]),
+      name: dco_decode_String(arr[2]),
+      password: dco_decode_String(arr[3]),
+      avatarUrl: dco_decode_String(arr[4]),
+      conversations: dco_decode_list_conversation(arr[5]),
     );
   }
 
@@ -644,12 +648,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   User sse_decode_user(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_id = sse_decode_String(deserializer);
+    var var_email = sse_decode_String(deserializer);
     var var_name = sse_decode_String(deserializer);
     var var_password = sse_decode_String(deserializer);
     var var_avatarUrl = sse_decode_String(deserializer);
     var var_conversations = sse_decode_list_conversation(deserializer);
     return User(
         id: var_id,
+        email: var_email,
         name: var_name,
         password: var_password,
         avatarUrl: var_avatarUrl,
@@ -760,6 +766,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_user(User self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.id, serializer);
+    sse_encode_String(self.email, serializer);
     sse_encode_String(self.name, serializer);
     sse_encode_String(self.password, serializer);
     sse_encode_String(self.avatarUrl, serializer);

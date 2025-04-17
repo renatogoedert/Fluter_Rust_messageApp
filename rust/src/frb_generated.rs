@@ -150,6 +150,7 @@ fn wire__crate__add_user_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_file_path = <String>::sse_decode(&mut deserializer);
+            let api_email = <String>::sse_decode(&mut deserializer);
             let api_name = <String>::sse_decode(&mut deserializer);
             let api_password = <String>::sse_decode(&mut deserializer);
             let api_avatar_url = <String>::sse_decode(&mut deserializer);
@@ -157,7 +158,13 @@ fn wire__crate__add_user_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        crate::add_user(api_file_path, api_name, api_password, api_avatar_url);
+                        crate::add_user(
+                            api_file_path,
+                            api_email,
+                            api_name,
+                            api_password,
+                            api_avatar_url,
+                        );
                     })?;
                     Ok(output_ok)
                 })())
@@ -435,14 +442,14 @@ fn wire__crate__validate_user_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_file_path = <String>::sse_decode(&mut deserializer);
-            let api_name = <String>::sse_decode(&mut deserializer);
+            let api_email = <String>::sse_decode(&mut deserializer);
             let api_password = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok(crate::validate_user(
                         api_file_path,
-                        api_name,
+                        api_email,
                         api_password,
                     ))?;
                     Ok(output_ok)
@@ -575,12 +582,14 @@ impl SseDecode for crate::User {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_id = <String>::sse_decode(deserializer);
+        let mut var_email = <String>::sse_decode(deserializer);
         let mut var_name = <String>::sse_decode(deserializer);
         let mut var_password = <String>::sse_decode(deserializer);
         let mut var_avatarUrl = <String>::sse_decode(deserializer);
         let mut var_conversations = <Vec<crate::Conversation>>::sse_decode(deserializer);
         return crate::User {
             id: var_id,
+            email: var_email,
             name: var_name,
             password: var_password,
             avatar_url: var_avatarUrl,
@@ -675,6 +684,7 @@ impl flutter_rust_bridge::IntoDart for crate::User {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.id.into_into_dart().into_dart(),
+            self.email.into_into_dart().into_dart(),
             self.name.into_into_dart().into_dart(),
             self.password.into_into_dart().into_dart(),
             self.avatar_url.into_into_dart().into_dart(),
@@ -790,6 +800,7 @@ impl SseEncode for crate::User {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.id, serializer);
+        <String>::sse_encode(self.email, serializer);
         <String>::sse_encode(self.name, serializer);
         <String>::sse_encode(self.password, serializer);
         <String>::sse_encode(self.avatar_url, serializer);

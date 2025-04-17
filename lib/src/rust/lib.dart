@@ -50,21 +50,23 @@ Future<void> updateAvatarForConversation(
 
 Future<void> addUser(
         {required String filePath,
+        required String email,
         required String name,
         required String password,
         required String avatarUrl}) =>
     RustLib.instance.api.crateAddUser(
         filePath: filePath,
+        email: email,
         name: name,
         password: password,
         avatarUrl: avatarUrl);
 
 Future<User?> validateUser(
         {required String filePath,
-        required String name,
+        required String email,
         required String password}) =>
-    RustLib.instance.api
-        .crateValidateUser(filePath: filePath, name: name, password: password);
+    RustLib.instance.api.crateValidateUser(
+        filePath: filePath, email: email, password: password);
 
 Future<void> deleteUser({required String filePath, required String id}) =>
     RustLib.instance.api.crateDeleteUser(filePath: filePath, id: id);
@@ -127,6 +129,7 @@ class Message {
 
 class User {
   final String id;
+  final String email;
   final String name;
   final String password;
   final String avatarUrl;
@@ -134,6 +137,7 @@ class User {
 
   const User({
     required this.id,
+    required this.email,
     required this.name,
     required this.password,
     required this.avatarUrl,
@@ -143,6 +147,7 @@ class User {
   @override
   int get hashCode =>
       id.hashCode ^
+      email.hashCode ^
       name.hashCode ^
       password.hashCode ^
       avatarUrl.hashCode ^
@@ -154,6 +159,7 @@ class User {
       other is User &&
           runtimeType == other.runtimeType &&
           id == other.id &&
+          email == other.email &&
           name == other.name &&
           password == other.password &&
           avatarUrl == other.avatarUrl &&

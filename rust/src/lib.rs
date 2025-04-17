@@ -203,6 +203,7 @@ static USERS: Lazy<Mutex<Vec<User>>> = Lazy::new(|| Mutex::new(Vec::new()));
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct User {
     pub id: String,
+    pub email: String,
     pub name: String,
     pub password: String,
     pub avatar_url: String,
@@ -253,7 +254,13 @@ fn load_users(file_path: &str) -> io::Result<Vec<User>> {
 }
 
 #[flutter_rust_bridge::frb]
-pub fn add_user(file_path: String, name: String, password: String, avatar_url: String) {
+pub fn add_user(
+    file_path: String,
+    email: String,
+    name: String,
+    password: String,
+    avatar_url: String,
+) {
     let id = Utc::now().to_rfc3339();
     let conversations = Vec::new();
     let hashed_password = hash_password(&password);
@@ -261,6 +268,7 @@ pub fn add_user(file_path: String, name: String, password: String, avatar_url: S
     let mut users = USERS.lock().unwrap();
     users.push(User {
         id,
+        email,
         name,
         password: hashed_password,
         avatar_url,
@@ -270,12 +278,12 @@ pub fn add_user(file_path: String, name: String, password: String, avatar_url: S
 }
 
 #[flutter_rust_bridge::frb]
-pub fn validate_user(file_path: String, name: String, password: String) -> Option<User> {
+pub fn validate_user(file_path: String, email: String, password: String) -> Option<User> {
     let users = load_users(&file_path).unwrap_or_else(|_| Vec::new());
 
     users
         .into_iter()
-        .find(|user| user.name == name && verify_password(&user.password, &password))
+        .find(|user| user.email == email && verify_password(&user.password, &password))
 }
 
 #[flutter_rust_bridge::frb]

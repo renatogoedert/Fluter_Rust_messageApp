@@ -2,11 +2,14 @@
 
 import 'package:fluter_rust_message_app/Components/auth_login_form.dart';
 import 'package:fluter_rust_message_app/Components/auth_signin_form.dart';
+import 'package:fluter_rust_message_app/Provider/auth_provider.dart'
+    show AuthProvider;
 import 'package:fluter_rust_message_app/Screen/dashboard_screen.dart'
     show DashboardScreen;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart'
     show getApplicationDocumentsDirectory;
+import 'package:provider/provider.dart';
 
 import '../src/rust/lib.dart';
 
@@ -20,6 +23,9 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   //Controller for email text
   final TextEditingController _emailController = TextEditingController();
+
+  //Controller for name text
+  final TextEditingController _nameController = TextEditingController();
 
   //Controller for password text
   final TextEditingController _passwordController = TextEditingController();
@@ -74,19 +80,30 @@ class _AuthScreenState extends State<AuthScreen> {
       return;
     }
 
-    if (await validateUser(
-            filePath: await getMessagesFilePath(),
-            name: _emailController.text,
-            password: _passwordController.text) !=
-        null) {
+    final email = _emailController.text;
+    final password = _passwordController.text;
+
+    final user = await validateUser(
+        filePath: await getMessagesFilePath(),
+        email: email,
+        password: password);
+
+    if (user != null) {
       setState(() {
         isPasswordVisible = false;
         errorText = '';
       });
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => DashboardScreen(title: "title")));
+
+      if (!mounted) return;
+      context.read<AuthProvider>().login(user);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (_) => const DashboardScreen(
+                  title: "",
+                )),
+      );
     } else {
       setState(() {
         errorText = 'Unbable to login';
@@ -105,7 +122,8 @@ class _AuthScreenState extends State<AuthScreen> {
     }
     await addUser(
         filePath: await getMessagesFilePath(),
-        name: _emailController.text,
+        email: _emailController.text,
+        name: _nameController.text,
         password: _passwordController.text,
         avatarUrl: "");
 
@@ -144,6 +162,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       passwordController: _passwordController,
                       confirmPasswordController: _confirmPasswordController,
                       emailController: _emailController,
+                      nameController: _nameController,
                       singInFormKey: _singInFormKey,
                       isPasswordVisible: isPasswordVisible,
                       onSignIn: _trySignIn,

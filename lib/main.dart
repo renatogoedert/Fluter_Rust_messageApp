@@ -4,9 +4,9 @@
 
 import 'package:fluter_rust_message_app/Screen/auth_screen.dart'
     show AuthScreen;
-import 'package:fluter_rust_message_app/Screen/dashboard_screen.dart'
-    show DashboardScreen;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:fluter_rust_message_app/Provider/auth_provider.dart';
 import 'package:fluter_rust_message_app/src/rust/frb_generated.dart';
 
 Future<void> main() async {
@@ -14,7 +14,12 @@ Future<void> main() async {
 
   await RustLib.init();
 
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider<AuthProvider>(
+      create: (_) => AuthProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

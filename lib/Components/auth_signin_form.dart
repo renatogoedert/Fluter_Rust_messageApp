@@ -8,6 +8,7 @@ class AuthSignInForm extends StatelessWidget {
     required this.passwordController,
     required this.confirmPasswordController,
     required this.emailController,
+    required this.nameController,
     required this.singInFormKey,
     required this.onSignIn,
     required this.toogleLogin,
@@ -18,6 +19,7 @@ class AuthSignInForm extends StatelessWidget {
   final TextEditingController passwordController;
   final TextEditingController confirmPasswordController;
   final TextEditingController emailController;
+  final TextEditingController nameController;
   final GlobalKey<FormState> singInFormKey;
   final bool isPasswordVisible;
   final void Function() onSignIn;
@@ -43,6 +45,14 @@ class AuthSignInForm extends StatelessWidget {
             validator: (value) => value != null && value.contains('@')
                 ? null
                 : 'Enter a valid email',
+          ),
+          TextFormField(
+            controller: nameController,
+            decoration: InputDecoration(labelText: 'Name'),
+            keyboardType: TextInputType.emailAddress,
+            validator: (value) => value != null && value.length >= 6
+                ? null
+                : 'Enter a valid Full Name',
           ),
           TextFormField(
             controller: passwordController,
