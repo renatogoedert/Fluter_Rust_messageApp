@@ -194,7 +194,7 @@ pub fn update_avatar_for_conversation(
     *convs = conversations.clone();
 
     save_conversations(&file_path, &conversations)
-        .expect("Failed to save conversations after delete");
+        .expect("Failed to save conversations after update");
 }
 
 static USERS: Lazy<Mutex<Vec<User>>> = Lazy::new(|| Mutex::new(Vec::new()));
@@ -295,4 +295,21 @@ pub fn delete_user(file_path: String, id: String) {
     *convs = users.clone();
 
     save_users(&file_path, &users).expect("Failed to save users after delete");
+}
+
+#[flutter_rust_bridge::frb]
+pub fn update_avatar_for_user(file_path: String, user_id: String, avatar_url: String) {
+    let mut users = load_users(&file_path).unwrap_or_default();
+
+    for user in &mut users {
+        if user.id == user_id {
+            user.avatar_url = avatar_url;
+            break;
+        }
+    }
+
+    let mut usrs = USERS.lock().unwrap();
+    *usrs = users.clone();
+
+    save_users(&file_path, &users).expect("Failed to save users after update");
 }

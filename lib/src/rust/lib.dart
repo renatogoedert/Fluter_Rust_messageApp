@@ -71,6 +71,13 @@ Future<User?> validateUser(
 Future<void> deleteUser({required String filePath, required String id}) =>
     RustLib.instance.api.crateDeleteUser(filePath: filePath, id: id);
 
+Future<void> updateAvatarForUser(
+        {required String filePath,
+        required String userId,
+        required String avatarUrl}) =>
+    RustLib.instance.api.crateUpdateAvatarForUser(
+        filePath: filePath, userId: userId, avatarUrl: avatarUrl);
+
 class Conversation {
   final String id;
   final String title;

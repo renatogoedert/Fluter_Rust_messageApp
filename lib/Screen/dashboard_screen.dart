@@ -35,6 +35,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return '${directory.path}/conversations.txt';
   }
 
+  Future<String> getUsersFilePath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    return '${directory.path}/users.txt';
+  }
+
   //Initiate State loading conversations from Rust
   @override
   void initState() {
@@ -46,6 +51,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void dispose() {
     _titleController.dispose();
+    _avatarUrlController.dispose();
     super.dispose();
   }
 
@@ -125,6 +131,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
+  void _uploadUserAvatar(String id) async {
+    String avatarUrl = _avatarUrlController.text.trim();
+
+    if (kDebugMode) {
+      print('User id to be updated: $id');
+    }
+
+    if (avatarUrl.isNotEmpty) {
+      await updateAvatarForUser(
+          filePath: await getUsersFilePath(), userId: id, avatarUrl: avatarUrl);
+    }
+
+    _avatarUrlController.clear();
+
+    //Reload conversations from Rust
+    _loadConversarions();
+
+    if (kDebugMode) {
+      print("Conversation added to Rust and UI updated!");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,8 +160,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: TopBarProfile(
             name: context.watch<AuthProvider>().user!.name,
-            imageUrl:
-                "https://upload.wikimedia.org/wikipedia/commons/1/1c/Homer_British_Museum.jpg",
+            imageUrl: context.watch<AuthProvider>().user!.avatarUrl,
+            userId: context.watch<AuthProvider>().user!.id,
+            context: context,
+            avatarUrlController: _avatarUrlController,
+            uploadUserAvatar: _uploadUserAvatar,
           ),
         ),
         body: ConversationList(

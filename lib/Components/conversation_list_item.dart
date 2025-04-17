@@ -34,6 +34,7 @@ class ConversationListItem extends StatelessWidget {
             TextButton(
               child: const Text('Cancel'),
               onPressed: () {
+                avatarUrlController.clear();
                 Navigator.of(context).pop();
               },
             ),

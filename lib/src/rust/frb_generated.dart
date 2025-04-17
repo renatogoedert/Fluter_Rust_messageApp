@@ -69,7 +69,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.9.0';
 
   @override
-  int get rustContentHash => -1824054099;
+  int get rustContentHash => -1334390402;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -114,6 +114,11 @@ abstract class RustLibApi extends BaseApi {
   Future<void> crateUpdateAvatarForConversation(
       {required String filePath,
       required String conversationId,
+      required String avatarUrl});
+
+  Future<void> crateUpdateAvatarForUser(
+      {required String filePath,
+      required String userId,
       required String avatarUrl});
 
   Future<User?> crateValidateUser(
@@ -403,6 +408,35 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<void> crateUpdateAvatarForUser(
+      {required String filePath,
+      required String userId,
+      required String avatarUrl}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(filePath, serializer);
+        sse_encode_String(userId, serializer);
+        sse_encode_String(avatarUrl, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 11, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateUpdateAvatarForUserConstMeta,
+      argValues: [filePath, userId, avatarUrl],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateUpdateAvatarForUserConstMeta => const TaskConstMeta(
+        debugName: "update_avatar_for_user",
+        argNames: ["filePath", "userId", "avatarUrl"],
+      );
+
+  @override
   Future<User?> crateValidateUser(
       {required String filePath,
       required String email,
@@ -414,7 +448,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(email, serializer);
         sse_encode_String(password, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 11, port: port_);
+            funcId: 12, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_opt_box_autoadd_user,
