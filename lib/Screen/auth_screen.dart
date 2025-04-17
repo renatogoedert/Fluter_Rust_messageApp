@@ -5,6 +5,10 @@ import 'package:fluter_rust_message_app/Components/auth_signin_form.dart';
 import 'package:fluter_rust_message_app/Screen/dashboard_screen.dart'
     show DashboardScreen;
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart'
+    show getApplicationDocumentsDirectory;
+
+import '../src/rust/lib.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -39,10 +43,19 @@ class _AuthScreenState extends State<AuthScreen> {
     super.dispose();
   }
 
+  Future<String> getMessagesFilePath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    return '${directory.path}/users.txt';
+  }
+
   void _toogleLogin() {
     setState(() {
       isPasswordVisible = false;
+      errorText = "";
       isLogin = !isLogin;
+      _emailController.clear();
+      _passwordController.clear();
+      _confirmPasswordController.clear();
     });
   }
 
@@ -52,7 +65,7 @@ class _AuthScreenState extends State<AuthScreen> {
     });
   }
 
-  void _tryLogin() {
+  void _tryLogin() async {
     final isValid = _loginFormKey.currentState!.validate();
     if (!isValid) {
       setState(() {
@@ -61,9 +74,11 @@ class _AuthScreenState extends State<AuthScreen> {
       return;
     }
 
-    // Add authentication logic here
-    if (_emailController.text == 'bart@simpson.ie' &&
-        _passwordController.text == "123456") {
+    if (await validateUser(
+            filePath: await getMessagesFilePath(),
+            name: _emailController.text,
+            password: _passwordController.text) !=
+        null) {
       setState(() {
         isPasswordVisible = false;
         errorText = '';
@@ -80,7 +95,7 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  void _trySignIn() {
+  void _trySignIn() async {
     final isValid = _singInFormKey.currentState!.validate();
     if (!isValid) {
       setState(() {
@@ -88,24 +103,13 @@ class _AuthScreenState extends State<AuthScreen> {
       });
       return;
     }
+    await addUser(
+        filePath: await getMessagesFilePath(),
+        name: _emailController.text,
+        password: _passwordController.text,
+        avatarUrl: "");
 
-    // Add authentication logic here
-    if (_emailController.text == 'bart@simpson.ie' &&
-        _passwordController.text == "123456") {
-      setState(() {
-        isPasswordVisible = false;
-        errorText = '';
-      });
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => DashboardScreen(title: "title")));
-    } else {
-      // setState(() {
-      //   errorText = 'Unbable to login';
-      // });
-      print('unable to Sign In');
-    }
+    _toogleLogin();
   }
 
   @override
