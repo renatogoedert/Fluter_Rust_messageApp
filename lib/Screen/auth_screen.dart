@@ -49,7 +49,7 @@ class _AuthScreenState extends State<AuthScreen> {
     super.dispose();
   }
 
-  Future<String> getMessagesFilePath() async {
+  Future<String> getUserssFilePath() async {
     final directory = await getApplicationDocumentsDirectory();
     return '${directory.path}/users.txt';
   }
@@ -84,9 +84,7 @@ class _AuthScreenState extends State<AuthScreen> {
     final password = _passwordController.text;
 
     final user = await validateUser(
-        filePath: await getMessagesFilePath(),
-        email: email,
-        password: password);
+        filePath: await getUserssFilePath(), email: email, password: password);
 
     if (user != null) {
       setState(() {
@@ -121,7 +119,7 @@ class _AuthScreenState extends State<AuthScreen> {
       return;
     }
     await addUser(
-        filePath: await getMessagesFilePath(),
+        filePath: await getUserssFilePath(),
         email: _emailController.text,
         name: _nameController.text,
         password: _passwordController.text,

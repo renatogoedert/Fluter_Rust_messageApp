@@ -145,8 +145,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     _avatarUrlController.clear();
 
-    //Reload conversations from Rust
-    _loadConversarions();
+    await context.read<AuthProvider>().reloadUserById(
+          context.read<AuthProvider>().user!.id,
+          await getUsersFilePath(),
+        );
 
     if (kDebugMode) {
       print("Conversation added to Rust and UI updated!");
@@ -157,16 +159,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: TopBarProfile(
-            name: context.watch<AuthProvider>().user!.name,
-            imageUrl: context.watch<AuthProvider>().user!.avatarUrl,
-            userId: context.watch<AuthProvider>().user!.id,
-            context: context,
-            avatarUrlController: _avatarUrlController,
-            uploadUserAvatar: _uploadUserAvatar,
-          ),
-        ),
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            title: context.watch<AuthProvider>().user != null
+                ? TopBarProfile(
+                    name: context.watch<AuthProvider>().user!.name,
+                    imageUrl: context.watch<AuthProvider>().user!.avatarUrl,
+                    userId: context.watch<AuthProvider>().user!.id,
+                    context: context,
+                    avatarUrlController: _avatarUrlController,
+                    uploadUserAvatar: _uploadUserAvatar,
+                  )
+                : Text("data")),
         body: ConversationList(
           conversations: conversations,
           avatarUrlController: _avatarUrlController,

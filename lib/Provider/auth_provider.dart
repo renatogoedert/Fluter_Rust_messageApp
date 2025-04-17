@@ -17,4 +17,12 @@ class AuthProvider with ChangeNotifier {
     _user = null;
     notifyListeners();
   }
+
+  Future<void> reloadUserById(String userId, String filePath) async {
+    final updatedUser = await getUserById(filePath: filePath, userId: userId);
+    if (updatedUser != null) {
+      _user = updatedUser;
+      notifyListeners();
+    }
+  }
 }

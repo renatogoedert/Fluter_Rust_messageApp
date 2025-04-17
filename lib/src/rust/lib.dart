@@ -78,6 +78,9 @@ Future<void> updateAvatarForUser(
     RustLib.instance.api.crateUpdateAvatarForUser(
         filePath: filePath, userId: userId, avatarUrl: avatarUrl);
 
+Future<User?> getUserById({required String filePath, required String userId}) =>
+    RustLib.instance.api.crateGetUserById(filePath: filePath, userId: userId);
+
 class Conversation {
   final String id;
   final String title;

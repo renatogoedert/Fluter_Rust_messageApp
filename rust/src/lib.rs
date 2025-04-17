@@ -313,3 +313,9 @@ pub fn update_avatar_for_user(file_path: String, user_id: String, avatar_url: St
 
     save_users(&file_path, &users).expect("Failed to save users after update");
 }
+
+#[flutter_rust_bridge::frb]
+pub fn get_user_by_id(file_path: String, user_id: String) -> Option<User> {
+    let users = load_users(&file_path).unwrap_or_default();
+    users.into_iter().find(|u| u.id == user_id)
+}

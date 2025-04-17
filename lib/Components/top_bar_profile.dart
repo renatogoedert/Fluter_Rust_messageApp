@@ -57,7 +57,7 @@ class TopBarProfile extends StatelessWidget {
         GestureDetector(
           onTap: () => _changeAvatarUrl(),
           child: AnimatedSwitcher(
-            duration: Duration(microseconds: 300),
+            duration: Duration(microseconds: 500),
             transitionBuilder: (Widget child, Animation<double> animation) {
               return FadeTransition(
                 opacity: animation,
