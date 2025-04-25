@@ -1,4 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Add permissions outside the <application> tag -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- Optional permissions for Android 10 (API 29) and higher -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" android:targetSdkVersion="29" />
+
+
     <application
         android:label="fluter_rust_message_app"
         android:name="${applicationName}"

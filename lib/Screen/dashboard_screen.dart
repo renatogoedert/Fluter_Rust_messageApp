@@ -1,3 +1,5 @@
+import 'dart:io' show File;
+
 import 'package:fluter_rust_message_app/Components/conversation_create.dart';
 import 'package:fluter_rust_message_app/Components/conversation_list.dart';
 import 'package:fluter_rust_message_app/Components/top_bar_profile.dart';
@@ -5,6 +7,8 @@ import 'package:fluter_rust_message_app/Provider/auth_provider.dart'
     show AuthProvider;
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart' show ImagePicker, ImageSource;
+import 'package:path/path.dart' show basename;
 import 'package:path_provider/path_provider.dart'
     show getApplicationDocumentsDirectory;
 import 'package:provider/provider.dart';
@@ -132,7 +136,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _uploadUserAvatar(String id) async {
-    String avatarUrl = _avatarUrlController.text.trim();
+    String avatarUrl = await _takePicture();
 
     if (kDebugMode) {
       print('User id to be updated: $id');
@@ -143,15 +147,40 @@ class _DashboardScreenState extends State<DashboardScreen> {
           filePath: await getUsersFilePath(), userId: id, avatarUrl: avatarUrl);
     }
 
-    _avatarUrlController.clear();
-
     await context.read<AuthProvider>().reloadUserById(
           context.read<AuthProvider>().user!.id,
           await getUsersFilePath(),
         );
 
     if (kDebugMode) {
-      print("Conversation added to Rust and UI updated!");
+      print("Avatar added to Rust and UI updated!");
+    }
+  }
+
+  Future<String> _takePicture() async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.camera);
+
+      if (pickedFile != null) {
+        final directory = await getApplicationDocumentsDirectory();
+        final fileName = basename(pickedFile.path);
+
+        final savedImage =
+            await File(pickedFile.path).copy('${directory.path}/$fileName');
+
+        return savedImage.path;
+      } else {
+        if (kDebugMode) {
+          print("No image picked.");
+        }
+        return "";
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("ERROR SAVING IMAGE: $e");
+      }
+      return "";
     }
   }
 
