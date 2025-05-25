@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Fluter_Rust_messageApp
 Message aoo using fluter and rust
 =======
@@ -60,4 +59,3 @@ Rust functions are exposed to Flutter via code-generated bindings from `flutter_
 5. Create a conversation
 6. Chnage convesation image changing Url
 7. Send messages to conversations
->>>>>>> master
