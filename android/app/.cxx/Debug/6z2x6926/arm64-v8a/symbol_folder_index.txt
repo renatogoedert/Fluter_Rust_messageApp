@@ -1,0 +1,1 @@
+C:\Fluter_Rust_messageApp\build\app\intermediates\cxx\Debug\6z2x6926\obj\arm64-v8a
